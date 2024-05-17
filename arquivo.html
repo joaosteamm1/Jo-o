@@ -1,0 +1,99 @@
+let player1Score = 0;
+let player2Score = 0;
+let ball;
+let leftPaddle;
+let rightPaddle;
+let paddleWidth = 10;
+let paddleHeight = 60;
+let ballSize = 10;
+let ballSpeed = 3;
+let ballXSpeed;
+let ballYSpeed;
+
+function setup() {
+  createCanvas(400, 300);
+  leftPaddle = height / 2;
+  rightPaddle = height / 2;
+  ball = createVector(width / 2, height / 2);
+  ballXSpeed = random([-1, 1]) * ballSpeed;
+  ballYSpeed = random([-1, 1]) * ballSpeed;
+}
+
+function draw() {
+  background(0);
+  drawScores();
+  drawPaddles();
+  drawBall();
+  moveBall();
+  movePaddles();
+  checkCollision();
+}
+
+function drawScores() {
+  textSize(20);
+  fill(255);
+  text(player1Score, width / 4, 30);
+  text(player2Score, 3 * width / 4, 30);
+}
+
+function drawPaddles() {
+  fill(255);
+  rect(0, leftPaddle - paddleHeight / 2, paddleWidth, paddleHeight);
+  rect(width - paddleWidth, rightPaddle - paddleHeight / 2, paddleWidth, paddleHeight);
+}
+
+function drawBall() {
+  fill(255);
+  ellipse(ball.x, ball.y, ballSize);
+}
+
+function moveBall() {
+  ball.x += ballXSpeed;
+  ball.y += ballYSpeed;
+}
+
+function movePaddles() {
+  if (keyIsDown(UP_ARROW) && leftPaddle > paddleHeight / 2) {
+    leftPaddle -= 5;
+  }
+  if (keyIsDown(DOWN_ARROW) && leftPaddle < height - paddleHeight / 2) {
+    leftPaddle += 5;
+  }
+
+  if (keyIsDown(87) && rightPaddle > paddleHeight / 2) { // 'W' key
+    rightPaddle -= 5;
+  }
+  if (keyIsDown(83) && rightPaddle < height - paddleHeight / 2) { // 'S' key
+    rightPaddle += 5;
+  }
+}
+
+function checkCollision() {
+  if (ball.y - ballSize / 2 < 0 || ball.y + ballSize / 2 > height) {
+    ballYSpeed *= -1;
+  }
+
+  if (ball.x - ballSize / 2 < paddleWidth && 
+      ball.y > leftPaddle - paddleHeight / 2 && 
+      ball.y < leftPaddle + paddleHeight / 2) {
+    ballXSpeed *= -1;
+    player1Score++;
+  }
+
+  if (ball.x + ballSize / 2 > width - paddleWidth && 
+      ball.y > rightPaddle - paddleHeight / 2 && 
+      ball.y < rightPaddle + paddleHeight / 2) {
+    ballXSpeed *= -1;
+    player2Score++;
+  }
+
+  if (ball.x - ballSize / 2 < 0 || ball.x + ballSize / 2 > width) {
+    resetBall();
+  }
+}
+
+function resetBall() {
+  ball = createVector(width / 2, height / 2);
+  ballXSpeed = random([-1, 1]) * ballSpeed;
+  ballYSpeed = random([-1, 1]) * ballSpeed;
+}
